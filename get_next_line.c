@@ -6,11 +6,33 @@
 /*   By: mlakhssa <mlakhssa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:11:18 by mlakhssa          #+#    #+#             */
-/*   Updated: 2021/11/16 20:53:23 by mlakhssa         ###   ########.fr       */
+/*   Updated: 2021/12/04 16:55:11 by mlakhssa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"get_next_line.h"
+
+char	*ft_strchr(char *str, int c)
+{
+	char	*d;
+
+	c = (char)c;
+	while (*str)
+	{
+		if (*str == c)
+		{
+			d = (char *)str;
+			return (d);
+		}
+		str++;
+	}
+	if (*str == c)
+	{
+		d = (char *)str;
+		return (d);
+	}
+	return (0);
+}
 
 unsigned int	ft_strlen(char *src)
 {
@@ -39,7 +61,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	}
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (str == 0)
-		return (0); 
+		return (0);
 	i = 0;
 	while (s[start + i] && len > 0)
 	{
@@ -51,36 +73,46 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (str);
 }
 
+int	gnl(char **s, char **temp, char *buffer, int fd)
+{
+	int	i;
+
+	i = 1;
+	while (i > 0)
+	{
+		i = read(fd, buffer, BUFFER_SIZE);
+		if (i <= 0)
+			break ;
+		buffer[i] = '\0';
+		if (!(*s))
+			*s = ft_strdup(buffer);
+		else
+		{
+			temp[0] = ft_strjoin(*s, buffer);
+			free(*s);
+			*s = temp[0];
+		}
+		if (ft_strchr(*s, '\n'))
+			break ;
+	}
+	free(buffer);
+	return (i);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*s;
 	char		*buffer;
-	int			i;
 	char		*temp;
+	int			i;
 
-	if (fd < 0)
-		return(NULL);
-	if(!s)
-		s = ft_strdup("");
-	free(s);
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if(buffer == 0)
-		return(0);
-	i = read(fd, buffer, BUFFER_SIZE);
-	free(buffer);
-	if(i < 0)
-		return (NULL);
-	while (i > 0)
+	if (buffer == 0)
 	{
-		buffer[BUFFER_SIZE] = '\0';
-		temp = ft_strjoin(s,buffer);
-		free(s);
-		s = temp;
-		if(ft_strchr(s,'\n'))
-			break;
-		i = read(fd, buffer, BUFFER_SIZE);
+		return (0);
 	}
-	if (i == 0)
-		return (s);
-	return (ft_split(&s));
+	i = gnl(&s, &temp, buffer, fd);
+	if (i < 0)
+		return (NULL);
+	return (ft_launch(&s));
 }

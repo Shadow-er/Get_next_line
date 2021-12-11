@@ -6,35 +6,13 @@
 /*   By: mlakhssa <mlakhssa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 10:44:35 by mlakhssa          #+#    #+#             */
-/*   Updated: 2021/11/16 20:25:59 by mlakhssa         ###   ########.fr       */
+/*   Updated: 2021/12/04 16:55:34 by mlakhssa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"get_next_line.h"
 
-char	*ft_strchr(char *str, int c)
-{
-	char	*d;
-
-	c = (char)c;
-	while (*str)
-	{
-		if (*str == c)
-		{
-			d = (char *)str;
-			return (d);
-		}
-		str++;
-	}
-	if (*str == c)
-	{
-		d = (char *)str;
-		return (d);
-	}
-	return (0);
-}
-
-void	*ft_memmove(void *dst,void *src, size_t len)
+void	*ft_memmove(void *dst, void *src, size_t len)
 {
 	unsigned char	*p;
 	unsigned char	*s;
@@ -78,6 +56,23 @@ char	*ft_strdup(char *s1)
 	return (dst);
 }
 
+unsigned int	ft_strlcpy(char *dst, char *src, size_t size)
+{
+	unsigned int	j;
+
+	j = 0;
+	if (size != 0)
+	{
+		while (j < size - 1 && src[j])
+		{
+			dst[j] = src[j];
+			j++;
+		}
+		dst[j] = '\0';
+	}
+	return (ft_strlen(src));
+}
+
 char	*ft_strjoin(char *s1, char *s2)
 {
 	char				*i;
@@ -97,29 +92,32 @@ char	*ft_strjoin(char *s1, char *s2)
 	i = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
 	if (i == 0)
 		return (0);
-	ft_memmove(i, s1, len1);
-	ft_memmove(i + len1, s2, len2);
+	ft_strlcpy(i, s1, len1 + 1);
+	ft_strlcpy(i + len1, s2, len2 + 1);
 	i[j - 1] = '\0';
 	return (i);
 }
 
-char	*ft_split(char **s)
+char	*ft_launch(char **s)
 {
-	char			*temp;
-	char			*save;
-	unsigned int	i;
-	unsigned int	j;
-	unsigned int	reste;
+	char	*a;
+	char	*b;
+	int		j;
 
-	i = 0;
 	j = 0;
-	while (s[0][i])
-		i++;
-	while(s[0][j] != '\n' && s[0][j])
+	if (s[0] == 0)
+		return (0);
+	while (s[0][j] != '\n' && s[0][j])
 		j++;
-	reste = i - j - 1;
-	temp = ft_substr(s[0], 0, j + 1);
-	save = ft_substr(s[0], j + 1, reste);
-	s[0] = ft_substr(save,0, reste);
-	return (temp);
+	a = ft_substr(s[0], 0, j + 1);
+	b = ft_substr(s[0], j + 1, ft_strlen(s[0]) - j);
+	free(s[0]);
+	if (b[0] == '\0')
+	{
+		s[0] = NULL;
+		free(b);
+	}
+	else
+		s[0] = b;
+	return (a);
 }
