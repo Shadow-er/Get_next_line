@@ -6,7 +6,7 @@
 /*   By: mlakhssa <mlakhssa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 09:37:16 by mlakhssa          #+#    #+#             */
-/*   Updated: 2021/12/04 16:56:14 by mlakhssa         ###   ########.fr       */
+/*   Updated: 2021/12/17 11:29:59 by mlakhssa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ char	*get_next_line(int fd)
 	char		*temp;
 	int			i;
 
+	if (fd > OPEN_MAX)
+		return (NULL);
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buffer == 0)
 	{
@@ -117,3 +119,9 @@ char	*get_next_line(int fd)
 		return (NULL);
 	return (ft_launch(s, fd));
 }
+// #include<fcntl.h>
+// int main()
+// {
+// 	int fd = open("gnlTester/files/41_no_nl",O_RDONLY);
+// 	get_next_line(fd);
+// }
